@@ -6,3 +6,7 @@ json.phone user.phone
 json.visibility user.visibility
 json.bio user.bio
 json.skills user.skills
+
+# json.membership do
+#   json.partial! user.organizations, partial: "api/organizations/organization", as: :organization
+# end
