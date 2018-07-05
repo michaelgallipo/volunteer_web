@@ -5,9 +5,14 @@ Rails.application.routes.draw do
     get "users" => "users#index"
     get "users/:id" => "users#show"
     post "users" => "users#create"
+    patch "users/:id" => "users#update"
+    delete "users/:id" => "users#destroy"
 
     get "organizations" => "organizations#index"
-    get "organization/:id" => "organization#show" 
+    get "organizations/:id" => "organizations#show" 
+    post "organizations" => "organizations#create"
+    patch "organizations/:id" => "organizations#update"
+    delete "organizations/:id" => "organizations#destroy"
 
   end
 

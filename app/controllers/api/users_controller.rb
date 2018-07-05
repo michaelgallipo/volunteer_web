@@ -32,8 +32,37 @@ class Api::UsersController < ApplicationController
     if @user.save
       render "show.json.jbuilder"
     else
-      render json: {}
+      render json: {errors: @user.errors.full_messages}, status: :unprocessable_entity
     end
+
+  end
+
+  def update
+
+    @user = User.find(params[:id])
+      @user.full_name = params[:full_name] || @user.name
+      @user.user_name = params[:user_name] || @user.user_name
+      @user.address = params[:address] || @user.address
+      @user.email = params[:email] || @user.email
+      @user.phone = params[:phone] || @user.phone
+      @user.visibility = params[:visibility] || @user.visibility
+      @user.bio = params[:bio] || @user.bio
+      @user.skills = params[:skills] || @user.skills
+
+    if @user.save
+      render "show.json.jbuilder"
+    else
+      render json: {errors: @user.errors.full_messages}, status: :unprocessable_entity
+    end
+
+  end
+
+  def destroy
+
+    @user = User.find(params[:id])
+    @user.destroy
+
+    render json: {message: "User account succesfully deleted"}
 
   end
 
