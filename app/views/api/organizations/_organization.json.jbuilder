@@ -1,3 +1,4 @@
+json.id organization.id
 json.name organization.name
 json.address organization.address
 json.website organization.website
