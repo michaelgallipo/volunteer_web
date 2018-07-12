@@ -25,6 +25,7 @@ class Api::UsersController < ApplicationController
       address: params[:address],
       email: params[:email],
       phone: params[:phone],
+      visibility: params[:visibility],
       bio: params[:bio],
       skills: params[:skills]
       )
