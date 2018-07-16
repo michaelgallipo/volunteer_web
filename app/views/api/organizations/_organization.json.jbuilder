@@ -9,6 +9,7 @@ json.contact_phone organization.contact_phone
 json.mission organization.mission
 json.description organization.description
 json.category_id organization.category_id
+json.category organization.category
 json.needs organization.needs
 
 json.member do

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Volunteer Web</title>
+  <script src="https://unpkg.com/vue/dist/vue.js"></script>
+  <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
+  <script src="https://unpkg.com/axios/dist/axios.js"></script>
+  <script src="index.js" defer></script>
+</head>
+<body>
+  <div id="vue-app">
+
+    <router-view></router-view>
+
+  </div>
+</body>
+</html>
+
+<template id="home-page">
+  <div class="vue-component">
+
+    <h1>{{ message }}</h1>
+
+    <div v-for="organization in organizations">
+      <h3><a v-bind:href=" '/#/organizations/' + organization.id">{{organization.name}}</a></h3>
+      <p>{{organization.address}}<br>
+      {{organization.website}}</p>
+      <img :src="organization.logo" style="width:200px;height:200px;"><br>
+      <p>Category: {{ organization.category.name}}<br></p>
+      <p>Mission: <br>
+        <textarea :value="organization.mission" cols="50" rows="6"></textarea><br>
+      </p>
+<!--       <p>Description: <br>
+        <textarea :value="organization.description" cols="50" rows="10"></textarea><br> -->
+      </p>
+      <p>Needs: {{ organization.needs }}</p>
+
+    </div>
+
+  </div>
+</template>
+
+<template id="organization-show-page">
+  <div class="vue-component">
+
+    <h1>{{ message }}</h1>
+
+      <h2>{{ organization.name }}</h2>
+      <p>{{organization.address}}<br>
+      {{organization.website}}</p>
+      <img :src="organization.logo" style="width:200px;height:200px;"><br>
+      <h4>Contact Info</h4>
+      <p>{{ organization.contact_name }}<br>
+        {{ organization.contact_email }}<br>
+        {{ organization.contact_phone }}<br></p>
+      <p>Category: {{ organization.category.name}} <br></p>
+      <p>Mission: <br>
+        <textarea :value="organization.mission" cols="50" rows="6"></textarea><br>
+      </p>
+      <p>Description: <br>
+        <textarea :value="organization.description" cols="50" rows="10"></textarea><br>
+      </p>
+      <p>Needs: {{ organization.needs }}</p>
+
+    </div>
+
+  </div>
+</template>

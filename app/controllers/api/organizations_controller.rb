@@ -56,7 +56,7 @@ class Api::OrganizationsController < ApplicationController
     if @organization.save
       render "show.json.jbuilder"
     else
-      rrender json: {errors: @organization.errors.full_messages}, status: :unprocessable_entity
+      render json: {errors: @organization.errors.full_messages}, status: :unprocessable_entity
     end
 
   end
