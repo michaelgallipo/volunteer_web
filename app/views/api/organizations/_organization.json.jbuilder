@@ -12,7 +12,7 @@ json.category_id organization.category_id
 json.category organization.category
 json.needs organization.needs
 
-json.member do
+json.members do
   json.array! organization.users, partial: "api/users/user", as: :user
 end
   

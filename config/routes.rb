@@ -15,6 +15,10 @@ Rails.application.routes.draw do
     patch "organizations/:id" => "organizations#update"
     delete "organizations/:id" => "organizations#destroy"
 
+    get "categories" => "categories#index"
+
+    post "members" => "members#create"
+
   end
 
 end

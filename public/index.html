@@ -14,6 +14,7 @@
     <a href="/#/login">Login</a> &emsp;
     <a href="/#/logout">Logout</a> &emsp;
     <a href="/#/users/new">Create New Account</a>
+    <a v-if="isLoggedIn()" href="/#/users/me">User Profile Page</a>
 
     <router-view></router-view>
 
@@ -34,9 +35,6 @@
       <p>Category: {{ organization.category.name}}<br></p>
       <p>Mission: <br>
         <textarea :value="organization.mission" cols="50" rows="6"></textarea><br>
-      </p>
-<!--       <p>Description: <br>
-        <textarea :value="organization.description" cols="50" rows="10"></textarea><br> -->
       </p>
       <p>Needs: {{ organization.needs }}</p>
 
@@ -69,9 +67,17 @@
       </p>
       <p>Needs: {{ organization.needs }}
       <br><br>
-      <a href="/">Return to Index</a> &emsp;
-      <a v-bind:href=" '/#/organizations/' +organization.id + '/edit' ">Edit Organization Information</a> &emsp;
-      <button v-on:click="deleteOrganization(organization)">Delete Organization</button> 
+      Members:
+      <div  v-for="member in organization.members">
+          <p v-if="member.visibility" >{{member.full_name}}</p>
+        </div><br><br>
+
+      <router-link to="/" tag="button">Return to Index</router-link> &emsp;
+<!--       <a href="/">Return to Index</a> &emsp; -->
+      <router-link v-bind:to=" '/organizations/' +organization.id + '/edit' " tag="button">Edit Organization Information</router-link> &emsp;<!--       <a v-bind:href=" '/#/organizations/' +organization.id + '/edit' ">Edit Organization Information</a> &emsp; -->
+      <button v-on:click="deleteOrganization(organization)">Delete Organization</button>  &emsp;
+      <button v-if="isLoggedIn() " v-on:click="joinOrganization(organization)">Become Member</button>
+
     </p>
     </div>
 
@@ -96,7 +102,11 @@
         Contact Phone: <input v-model="contact_phone"><br>
         Mission:<br> <textarea v-model="mission" cols="50" rows="6"></textarea><br>
         Description: <br><textarea v-model="description" cols="50" rows="10"></textarea><br>
-        Category ID: <input v-model="category_id"><br>
+        Category ID: 
+        <select v-model="category_id">
+        <option disabled value="">Please select one</option>
+        <option v-for="category in categories" v-bind:value="category.id">{{category.name}}</option>
+        </select><<br>
         Needs: <input v-model="needs"><br>
         <br><br>
         <button v-on:click="submit()">Submit</button> 
@@ -123,7 +133,11 @@
         Contact Phone: <input v-model="contact_phone"><br>
         Mission:<br> <textarea v-model="mission" cols="50" rows="6"></textarea><br>
         Description: <br><textarea v-model="description" cols="50" rows="10"></textarea><br>
-        Category ID: <input v-model="category_id"><br>
+<!--         Category ID: <input v-model="category_id"><br> -->
+        Category ID: 
+        <select v-model="category_id">
+        <option v-for="category in categories" v-bind:value="category.id">{{category.name}}</option>
+        </select><<br>
         Needs: <input v-model="needs"><br>
         <br><br>
         <button v-on:click="submit()">Submit</button>
@@ -142,12 +156,17 @@
       {{user.address}}<br>
       {{ user.email }}<br>
       {{ user.phone }}<br></p>
-      Visible? {{ user.visibility} <br></p>
+      <p v-if="user.visibility"> Visible? Yes<br></p>
+      <p v-else="user.visibility"> Visible? No<br></p>
       <p>Bio: <br>
         <textarea :value="user.bio" cols="50" rows="8"></textarea><br>
       </p>
       <p>Skills: {{ user.skills }}
       <br><br>
+            Affiliated Organizations:
+      <div  v-for="organization in user.member_of">
+           {{organization.name}}
+        </div><br><br>
       <a href="/">Return to Organization Index</a> &emsp;
       <a v-bind:href=" '/#/users/' +user.id + '/edit' ">Edit User Information</a> &emsp;
       <button v-on:click="deleteUser(user)">Delete User</button> 
@@ -172,11 +191,43 @@
         Address: <input v-model="address"><br>
         Email: <input v-model="email"><br>
         Phone: <input v-model="phone"><br>
-        Be Visible: <input v-model="visibility"><br>
+        Be Visible: <input type="radio" id="true" value="true" v-model="visibility">Yes &ensp;
+        <input type="radio" id="false" value="false" v-model="visibility">No
+        <br>
         Bio:<br> <textarea v-model="bio" cols="50" rows="8"></textarea><br>
         Skills: <input v-model="skills"><br>
         <br><br>
         <button v-on:click="submit()">Submit</button> 
+        <router-link to="/" tag="button">Cancel</router-link>
+      </div>
+
+  </div>
+</template>
+
+<template id="user-edit-page">
+  <div class="vue-component">
+
+    <h1>Edit User Information</h1>
+
+      <ul>
+        <li class="text-danger" v-for="error in errors">{{ error }}</li>
+      </ul>
+      <div>
+        Full Name: <input v-model="full_name"><br>
+        User Name: <input v-model="user_name"><br>
+        Password: <input v-model="password"><br>
+        Confirm Password: <input v-model="confirm_password"><br>
+        Address: <input v-model="address"><br>
+        Email: <input v-model="email"><br>
+        Phone: <input v-model="phone"><br>
+        Be Visible: <input type="radio" id="true" value="true" v-model="visibility">Yes &ensp;
+        <input type="radio" id="false" value="false" v-model="visibility">No
+        <br>
+        Bio:<br> <textarea v-model="bio" cols="50" rows="8"></textarea><br>
+        Skills: <input v-model="skills"><br>
+        <br><br>
+        <button v-on:click="submit()">Submit</button> 
+        <router-link to="users/me" tag="button">Cancel</router-link>
       </div>
 
   </div>
@@ -205,4 +256,4 @@
     </div>
 
   </div>
-</template>
+</template> 

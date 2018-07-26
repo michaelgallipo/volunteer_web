@@ -8,10 +8,13 @@ class Api::UsersController < ApplicationController
 
   def show
 
-    user_id = params[:id]
-    @user = User.find(user_id)
-
-    render "show.json.jbuilder"
+    if current_user
+      # user_id = params[:id]
+      @user = User.find(current_user.id)
+      render "show.json.jbuilder"
+    else
+      render json: ["fail"]
+    end
 
   end
 
@@ -39,8 +42,8 @@ class Api::UsersController < ApplicationController
   end
 
   def update
-
-    @user = User.find(params[:id])
+    if current_user
+      @user = User.find(current_user.id)
       @user.full_name = params[:full_name] || @user.name
       @user.user_name = params[:user_name] || @user.user_name
       @user.address = params[:address] || @user.address
@@ -49,7 +52,10 @@ class Api::UsersController < ApplicationController
       @user.visibility = params[:visibility] || @user.visibility
       @user.bio = params[:bio] || @user.bio
       @user.skills = params[:skills] || @user.skills
-
+    else
+      render json: ["Fail"]
+    end
+    
     if @user.save
       render "show.json.jbuilder"
     else

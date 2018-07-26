@@ -24,7 +24,8 @@ var OrganizationShowPage = {
   data: function() {
     return {
       message: "Volunteer Web",
-      organization: {}
+      organization: {},
+      user_id: ""
     };
   },
   created: function() {
@@ -32,6 +33,11 @@ var OrganizationShowPage = {
       this.organization = response.data;
       console.log(this.organization);
     }.bind(this));
+    axios.get("/api/users/me")
+      .then(function(response) {
+        this.user = response.data;
+        console.log(this.user);
+    }.bind(this));    
   },
   methods: {
     deleteOrganization: function(organization) {
@@ -42,6 +48,31 @@ var OrganizationShowPage = {
           this.errors = error.response.data.errors;
         }.bind(this)
       );
+    },
+    joinOrganization: function(organization) {
+      var params = {
+        organization_id: this.organization.id
+      };
+      axios
+        .post("/api/members", params)
+        .then(function(response) {
+          router.push("/organizations/" +this.$route.params.id);
+        }.bind(this)
+      );
+    },
+    isLoggedIn: function() {
+      if (localStorage.getItem("jwt")) {
+        return true;
+      }
+        return false;
+    },
+    isMemberOf: function(organization) {
+      organization.members.forEach(function(member) {
+        if (member.id == this.user.id) {
+          return true;
+        }
+          return false;
+      });
     },
   },
   computed: {}
@@ -61,9 +92,17 @@ var OrganizationNewPage = {
       mission: "",
       description: "",
       category_id: "",
+      categories: [],
       needs: "",
       errors: []
     };
+  },
+  created: function() {
+    axios.get("/api/categories").then(
+      function(response) {
+        this.categories = response.data;
+        console.log(this.categories);
+      }.bind(this));
   },
   methods: {
     submit: function() {
@@ -83,7 +122,7 @@ var OrganizationNewPage = {
       axios
         .post("/api/organizations", params)
         .then(function(response) {
-          router.push("/#/");
+          router.push("/");
       })
       .catch(
         function(error) {
@@ -109,6 +148,7 @@ var OrganizationEditPage = {
       mission: "",
       description: "",
       category_id: "",
+      categories: [],
       needs: "",
       errors: []
     };
@@ -127,6 +167,11 @@ var OrganizationEditPage = {
       this.description = response.data.description;
       this.needs = response.data.needs;
     }.bind(this));
+    axios.get("/api/categories").then(
+      function(response) {
+        this.categories = response.data;
+        console.log(this.categories);
+      }.bind(this));
   },
   methods: {
     submit: function() {
@@ -196,12 +241,73 @@ var UserNewPage = {
       address: "",
       email: "",
       phone: "",
+      visibility: "",
+      bio: "",
+      skills: "",
+      errors: []
+    };
+  },
+  methods: {
+    submit: function() {
+      var params = {
+        full_name: this.full_name,
+        user_name: this.user_name,
+        password: this.password,
+        confirm_password: this.confirm_password,
+        address: this.address,
+        email: this.email,
+        phone: this.phone,
+        visibility: this.visibility,
+        bio: this.bio,
+        skills: this.skills
+    };
+      axios
+        .post("/api/users", params)
+        .then(function(response) {
+          router.push("/");
+      })
+      .catch(
+        function(error) {
+          this.errors = error.response.data.errors;
+        }.bind(this)
+      );
+    },
+  },
+  computed: {}
+};
+
+var UserEditPage = {
+  template: "#user-edit-page",
+  data: function() {
+    return {
+      full_name: "",
+      user_name: "",
+      password: "",
+      confirm_password: "",
+      address: "",
+      email: "",
+      phone: "",
       visibility: true,
       bio: "",
       skills: "",
       errors: []
     };
   },
+  created: function() {
+    axios.get("/api/users/" + this.$route.params.id ).then(function(response) {
+        this.full_name = response.data.full_name;
+        this.user_name = response.data.user_name;
+        // password: this.password,
+        // confirm_password: this.confirm_password,
+        this.address = response.data.address;
+        this.email = response.data.email;
+        this.phone = response.data.phone;
+        this.visibility = response.data.visibility;
+        this.bio = response.data.bio;
+        this.skills = response.data.skills;
+    }.bind(this));
+  },
+
   methods: {
     submit: function() {
       var params = {
@@ -217,9 +323,9 @@ var UserNewPage = {
         skills: this.skills
     };
       axios
-        .post("/api/users", params)
+        .patch("/api/users/" +this.$route.params.id, params)
         .then(function(response) {
-          router.push("/#/");
+          router.push("/users/me");
       })
       .catch(
         function(error) {
@@ -230,6 +336,7 @@ var UserNewPage = {
   },
   computed: {}
 };
+
 
 
 
@@ -285,6 +392,7 @@ var router = new VueRouter({
   { path: "/organizations/:id/edit", component: OrganizationEditPage},
   { path: "/users/new", component: UserNewPage},
   { path: "/users/:id", component: UserShowPage},
+  { path: "/users/:id/edit", component: UserEditPage},
   { path: "/login", component: LoginPage },
   { path: "/logout", component: LogoutPage }
   ],
@@ -301,5 +409,13 @@ var app = new Vue({
     if (jwt) {
       axios.defaults.headers.common["Authorization"] = jwt;
     }
+  },
+  methods: {
+    isLoggedIn: function() {
+      if (localStorage.getItem("jwt")) {
+        return true;
+      }
+      return false;
+    },
   }
 });
