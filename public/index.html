@@ -3,6 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <title>Volunteer Web</title>
+
+  <link href="css/plugins/plugins.css" rel="stylesheet">
+  <!-- REVOLUTION STYLE SHEETS -->
+  <link rel="stylesheet" type="text/css" href="revolution/css/settings.css">
+  <!-- REVOLUTION LAYERS STYLES -->
+  <link rel="stylesheet" type="text/css" href="revolution/css/layers.css">
+  <!-- REVOLUTION NAVIGATION STYLES -->
+  <link rel="stylesheet" type="text/css" href="revolution/css/navigation.css">
+  <!-- load css for cubeportfolio -->
+  <link rel="stylesheet" type="text/css" href="cubeportfolio/css/cubeportfolio.min.css">     
+  <link href="css/style.css" rel="stylesheet">
+
   <script src="https://unpkg.com/vue/dist/vue.js"></script>
   <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
   <script src="https://unpkg.com/axios/dist/axios.js"></script>
@@ -10,11 +22,37 @@
 </head>
 <body>
   <div id="vue-app">
+         <nav class="navbar navbar-expand-lg navbar-light bg-faded nav-sticky">
+            <div class="search-inline">
+                <form>
+                    <input type="text" class="form-control" placeholder="Type and hit enter...">
+                    <button type="submit"><i class="ti-search"></i></button>
+                    <a href="javascript:void(0)" class="search-close"><i class="ti-close"></i></a>
+                </form>
+            </div><!--/search form-->
+            <div class="container">
 
-    <a href="/#/login">Login</a> &emsp;
-    <a href="/#/logout">Logout</a> &emsp;
-    <a href="/#/users/new">Create New Account</a>
-    <a v-if="isLoggedIn()" href="/#/users/me">User Profile Page</a>
+                <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div  id="navbarNavDropdown" class="navbar-collapse collapse">
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" v-if="!isLoggedIn()" href="/#/login">Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" v-if="isLoggedIn()" href="/#/logout">Logout</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" v-if="!isLoggedIn()" href="/#/users/new">Create New Account</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" v-if="isLoggedIn()" href="/#/users/me">User Profile Page</a>
+                        </li>
+                    </ul>        
+                </div>
+            </div>
+        </nav>
 
     <router-view></router-view>
 
@@ -25,22 +63,72 @@
 <template id="home-page">
   <div class="vue-component">
 
-    <h1>{{ message }}</h1>
+        <div class="page-titles-img title-space-lg bg-parallax parallax-overlay" data-jarallax='{"speed": 0.2}' style='background-image: url("images/church_lucisart2.jpg")'>
+            <div class="container">
+                <div class="row">
+                    <div class=" col-md-8 ml-auto mr-auto">
+                        <h1 class='text-uppercase'>{{message}} </h1>
 
-    <div v-for="organization in organizations">
-      <h3><a v-bind:href=" '/#/organizations/' + organization.id">{{organization.name}}</a></h3>
-      <p>{{organization.address}}<br>
-      {{organization.website}}</p>
-      <img :src="organization.logo" style="width:200px;height:200px;"><br>
-      <p>Category: {{ organization.category.name}}<br></p>
-      <p>Mission: <br>
-        <textarea :value="organization.mission" cols="50" rows="6"></textarea><br>
-      </p>
-      <p>Needs: {{ organization.needs }}</p>
+                     </div>
+                </div>
+            </div>
+        </div><!--page title end-->
+      <router-link to="organizations" tag="button" class="btn btn-primary mb5 btn-rounded">Organization Index</router-link>
+      <router-link to="organizations/new" tag="button" class="btn btn-primary mb5 btn-rounded">Create New Organization</router-link>
 
+  </div>
+</template>
+
+<template id="organization-index-page">
+  <div class="vue-component">
+
+    <div class="page-titles page-title-center title-gray pt30 pb20">
+      <div class="container">
+        <div class="row">
+            <div class=" col-md-12 text-center">
+                <h3 class="text-uppercase">{{message}}</h3>
+            </div>
+        </div>
+      </div>
     </div>
 
-      <a href="/#/organizations/new">Create New Organization</a> 
+    <div>
+      Search by Category &emsp; <select v-model="search_id">
+        <option value="">Please select one</option>
+        <option v-for="category in categories" v-bind:value="category.id">{{category.name}}</option>
+        </select> &emsp;
+        <router-link to="organizations/new" tag="button" class="btn btn-outline-primary mb5 btn-rounded">Create New Organization</router-link><br><br><br>
+      </div>
+
+    <div class="row">
+      <div v-for="organization in organizations" class="col-lg-6">
+
+            <div class='mb30 image-text-card1' v-if="organization.category_id === search_id || search_id == '' ">  
+              <img :src="organization.logo" alt='' style="width:350px;height:200px;" >
+                <h3><a v-bind:href=" '/#/organizations/' + organization.id">{{organization.name}}</a></h3>
+                <p>{{organization.address}}<br>
+                {{organization.website}}</p>
+
+                <p>Category: {{ organization.category.name}}<br></p>
+                <p>Mission: <br>
+                <textarea :value="organization.mission" cols="75" rows="6"></textarea><br>
+                </p>
+                <p>Needs: {{ organization.needs }}</p>
+              </div>
+
+  <!--     <div v-for="organization in organizations">
+        <div v-if="organization.category_id === search_id || search_id == '' ">
+        <h3><a v-bind:href=" '/#/organizations/' + organization.id">{{organization.name}}</a></h3>
+        <p>{{organization.address}}<br>
+        {{organization.website}}</p>
+        <img :src="organization.logo" style="width:200px;height:200px;"><br>
+        <p>Category: {{ organization.category.name}}<br></p>
+        <p>Mission: <br>
+          <textarea :value="organization.mission" cols="50" rows="6"></textarea><br>
+        </p>
+        <p>Needs: {{ organization.needs }}</p> -->
+      </div>
+    </div>
 
   </div>
 </template>
@@ -48,9 +136,119 @@
 <template id="organization-show-page">
   <div class="vue-component">
 
-    <h1>{{ message }}</h1>
+    <div class="page-titles-img title-space-md bg-primary parallax-overlay" data-jarallax='{"speed": 0.2}' style='background-image: url("images/bg4.jpg");background-position:top center;'>
+        <div class="container">
+            <div class="row">
+                <div class=" col-md-12">
+                    <h1 class="text-uppercase">{{message}}</h1>
+                </div>
+            </div>
+        </div>
+    </div><!--page title end-->
 
-      <h2>{{ organization.name }}</h2>
+    <div class="navbar-seconday bg-faded nav-sticky text-center" id="navsecondary">
+
+                <ul class="mb0 list-inline">
+                <li class="list-inline-item nav-item "><a data-scroll="" href="/#/organizations" class="nav-link">Return to Index</a></li>
+                <li class="list-inline-item nav-item "><a data-scroll="" v-bind:href=" '/#/organizations/' +organization.id + '/edit' " class="nav-link">Edit Organization Information</a></li>
+                <li class="list-inline-item nav-item "><a data-scroll="" v-on:click="deleteOrganization(organization)" class="nav-link">Delete Organization</a></li>
+            </ul>
+        </div>
+
+    <div class="container">
+      <div class="row pb50 align-item-center">
+          <div class="col-sm-6 mb40">
+              <h2>{{ organization.name }}</h2>
+              <p class="lead">
+                  Category: {{ organization.category.name}}
+              </p>
+              <p>
+                  {{organization.description}}
+              </p>
+              <a v-if="!isMemberOf()" v-on:click="joinOrganization(organization)" class="btn btn-outline-success">Become Member</a>
+              <a v-if="isMemberOf()" v-on:click="leaveOrganization(organization)" class="btn btn-outline-danger">Delete Membership</a>
+          </div>
+          <div class="col-sm-6 mb40">
+            <div class="item">
+                <img :src="organization.logo" alt="" style="width:350px;height:200px;">
+            </div>
+          </div>
+      </div>
+
+
+      <div class="row pb50">
+        <div class="col-md-4 mb30">
+            <h4 class="text-uppercase">
+                Our Mission
+            </h4>
+            <p>
+                {{organization.mission}}
+            </p>
+        </div>
+        <div class="col-md-4 mb30">
+            <h4 class="text-uppercase">
+                Our Needs
+            </h4>
+            <p>
+               {{organization.needs}}
+            </p><br><br>
+            <h4 class="text-uppercase">
+                Members
+            </h4>
+            <div  v-for="member in organization.members">
+              <a v-if="member.visibility" v-bind:href=" '/#/users/' + member.id ">{{member.full_name}}</a>
+            </div>
+
+        </div>
+          <div class="col-md-4 mb30">
+            <h4 class="text-uppercase mb30">
+                Contact Info
+            </h4>
+            <div class="media mb20">
+                <i class="d-flex mt5 fa fa-home icon-sm-rounded mr-3"></i>
+                <div class="media-body">
+                    <h5 class="mt-0 mb0 text-uppercase">Address</h5>
+                    {{organization.address}}
+                </div>
+            </div>
+            <div class="media mb20">
+                <i class="d-flex mt5 fa fa-user-o icon-sm-rounded mr-3"></i>
+                <div class="media-body">
+                    <h5 class="mt-0 mb0 text-uppercase">Contact Person</h5>
+                    {{organization.contact_name}}
+                </div>
+            </div>
+            
+            <div class="media mb20">
+                <i class="d-flex mt5 fa fa-phone icon-sm-rounded mr-3"></i>
+                <div class="media-body">
+                    <h5 class="mt-0 mb0 text-uppercase">Phone</h5>
+                    {{organization.contact_phone}}
+                </div>
+            </div>           
+            <div class="media mb20">
+                <i class="d-flex mt5 fa fa-envelope icon-sm-rounded mr-3"></i>
+                <div class="media-body">
+                    <h5 class="mt-0 mb0 text-uppercase">Email</h5>
+                    {{organization.contact_email}}
+                </div>
+            </div>
+            <div class="media mb20">
+                <i class="d-flex mt5 fa fa-desktop icon-sm-rounded mr-3"></i>
+                <div class="media-body">
+                    <h5 class="mt-0 mb0 text-uppercase">website</h5>
+                    {{organization.website}}
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    </div>
+
+<!--     <h1>{{ message }}</h1> -->
+
+<!--       <h2>{{ organization.name }}</h2>
       <p>{{organization.address}}<br>
       {{organization.website}}</p>
       <img :src="organization.logo" style="width:200px;height:200px;"><br>
@@ -69,14 +267,14 @@
       <br><br>
       Members:
       <div  v-for="member in organization.members">
-          <p v-if="member.visibility" >{{member.full_name}}</p>
-        </div><br><br>
+          <a v-if="member.visibility" v-bind:href=" '/#/users/' + member.id ">{{member.full_name}}</a>
+        </div><br><br> -->
 
-      <router-link to="/" tag="button">Return to Index</router-link> &emsp;
-<!--       <a href="/">Return to Index</a> &emsp; -->
-      <router-link v-bind:to=" '/organizations/' +organization.id + '/edit' " tag="button">Edit Organization Information</router-link> &emsp;<!--       <a v-bind:href=" '/#/organizations/' +organization.id + '/edit' ">Edit Organization Information</a> &emsp; -->
+      <router-link to="/organizations" tag="button">Return to Index</router-link> &emsp;
+      <router-link v-bind:to=" '/organizations/' +organization.id + '/edit' " tag="button">Edit Organization Information</router-link> &emsp;
       <button v-on:click="deleteOrganization(organization)">Delete Organization</button>  &emsp;
-      <button v-if="isLoggedIn() " v-on:click="joinOrganization(organization)">Become Member</button>
+      <button v-if="!isMemberOf()" v-on:click="joinOrganization(organization)">Become Member</button>
+      <button v-if="isMemberOf()" v-on:click="leaveOrganization(organization)">Delete Membership</button>
 
     </p>
     </div>
@@ -110,6 +308,7 @@
         Needs: <input v-model="needs"><br>
         <br><br>
         <button v-on:click="submit()">Submit</button> 
+        <router-link to="/organizations" tag="button">Cancel</router-link>
       </div>
 
   </div>
@@ -133,7 +332,7 @@
         Contact Phone: <input v-model="contact_phone"><br>
         Mission:<br> <textarea v-model="mission" cols="50" rows="6"></textarea><br>
         Description: <br><textarea v-model="description" cols="50" rows="10"></textarea><br>
-<!--         Category ID: <input v-model="category_id"><br> -->
+
         Category ID: 
         <select v-model="category_id">
         <option v-for="category in categories" v-bind:value="category.id">{{category.name}}</option>
@@ -141,6 +340,7 @@
         Needs: <input v-model="needs"><br>
         <br><br>
         <button v-on:click="submit()">Submit</button>
+        <router-link to="/organizations" tag="button">Cancel</router-link>
       </div>
 
   </div>
@@ -167,9 +367,9 @@
       <div  v-for="organization in user.member_of">
            {{organization.name}}
         </div><br><br>
-      <a href="/">Return to Organization Index</a> &emsp;
-      <a v-bind:href=" '/#/users/' +user.id + '/edit' ">Edit User Information</a> &emsp;
-      <button v-on:click="deleteUser(user)">Delete User</button> 
+      <a href="/#/organizations">Return to Organization Index</a> &emsp;
+      <a v-if="getActiveUser() == user.id" v-bind:href=" '/#/users/' +user.id + '/edit' ">Edit User Information</a> &emsp;
+      <button v-if="getActiveUser() == user.id" v-on:click="deleteUser(user)">Delete User</button> 
     </p>
     </div>
 
@@ -216,7 +416,7 @@
         Full Name: <input v-model="full_name"><br>
         User Name: <input v-model="user_name"><br>
         Password: <input v-model="password"><br>
-        Confirm Password: <input v-model="confirm_password"><br>
+        Confirm Password: <input v-model="password_confirmation"><br>
         Address: <input v-model="address"><br>
         Email: <input v-model="email"><br>
         Phone: <input v-model="phone"><br>

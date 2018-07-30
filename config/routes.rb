@@ -17,7 +17,9 @@ Rails.application.routes.draw do
 
     get "categories" => "categories#index"
 
+    get "members" => "members#index"
     post "members" => "members#create"
+    delete "members/:id" => "members#destroy"
 
   end
 

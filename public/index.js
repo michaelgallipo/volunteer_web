@@ -5,7 +5,20 @@ var HomePage = {
   data: function() {
     return {
       message: "Welcome to Volunteer Web!",
-      organizations: []
+    };
+  },
+  methods: {},
+  computed: {}
+};
+
+var OrganizationIndexPage = {
+  template: "#organization-index-page",
+  data: function() {
+    return {
+      message: "Organization Listing",
+      organizations: [],
+      categories: [],
+      search_id: "",
     };
   },
   created: function() {
@@ -13,6 +26,11 @@ var HomePage = {
       function(response) {
         this.organizations = response.data;
         console.log(this.organizations);
+      }.bind(this));
+    axios.get("/api/categories").then(
+      function(response) {
+        this.categories = response.data;
+        console.log(this.categories);
       }.bind(this));
   },
   methods: {},
@@ -25,6 +43,7 @@ var OrganizationShowPage = {
     return {
       message: "Volunteer Web",
       organization: {},
+      members: [],
       user_id: ""
     };
   },
@@ -33,10 +52,10 @@ var OrganizationShowPage = {
       this.organization = response.data;
       console.log(this.organization);
     }.bind(this));
-    axios.get("/api/users/me")
+    axios.get("/api/members")
       .then(function(response) {
-        this.user = response.data;
-        console.log(this.user);
+        this.members = response.data;
+        console.log(this.members);
     }.bind(this));    
   },
   methods: {
@@ -60,19 +79,41 @@ var OrganizationShowPage = {
         }.bind(this)
       );
     },
-    isLoggedIn: function() {
-      if (localStorage.getItem("jwt")) {
-        return true;
-      }
-        return false;
-    },
-    isMemberOf: function(organization) {
-      organization.members.forEach(function(member) {
-        if (member.id == this.user.id) {
-          return true;
+    leaveOrganization: function(organization) {
+      var delete_id = "";
+      var active_id = localStorage.getItem("active_user");
+        this.members.forEach(function(member) {
+        if (member.user_id.toString() == active_id) {
+          delete_id = member.id;
         }
-          return false;
-      });
+      }.bind(this));
+        var params = {
+          memeber_id: delete_id
+      };
+        axios
+          .delete("api/members/" + delete_id, params)
+          .then(function(response) {
+            router.push("/organizations/");
+          });
+    },
+    // isLoggedIn: function() {
+    //   if (localStorage.getItem("jwt")) {
+    //     return true;
+    //   }
+    //     return false;
+    // },
+    getActiveUser: function() {
+      return localStorage.getItem("active_user");
+    },
+    isMemberOf: function() {
+      var return_value = false
+      var active_id = localStorage.getItem("active_user");
+      this.organization.members.forEach(function(member) {
+        if (member.id.toString() == active_id) {
+          return_value = true;
+        }
+      }.bind(this));
+      return return_value;
     },
   },
   computed: {}
@@ -226,6 +267,9 @@ var UserShowPage = {
         }.bind(this)
       );
     },
+    getActiveUser: function() {
+      return localStorage.getItem("active_user");
+    }
   },
   computed: {}
 };
@@ -314,7 +358,7 @@ var UserEditPage = {
         full_name: this.full_name,
         user_name: this.user_name,
         password: this.password,
-        onfirm_password: this.confirm_password,
+        password_confirmation: this.password_confirmation,
         address: this.address,
         email: this.email,
         phone: this.phone,
@@ -358,9 +402,11 @@ var LoginPage = {
       axios
         .post("/user_token", params)
         .then(function(response) {
+          console.log(response);
           axios.defaults.headers.common["Authorization"] =
             "Bearer " + response.data.jwt;
           localStorage.setItem("jwt", response.data.jwt);
+          localStorage.setItem("active_user", response.data.user.id);
           router.push("/");
         })
         .catch(
@@ -387,6 +433,7 @@ var LogoutPage = {
 var router = new VueRouter({
   routes: [
   { path: "/", component: HomePage },
+  { path: "/organizations", component:OrganizationIndexPage},
   { path: "/organizations/new", component: OrganizationNewPage},
   { path: "/organizations/:id", component: OrganizationShowPage},
   { path: "/organizations/:id/edit", component: OrganizationEditPage},

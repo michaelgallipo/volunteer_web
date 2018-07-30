@@ -9,8 +9,11 @@ class Api::UsersController < ApplicationController
   def show
 
     if current_user
-      # user_id = params[:id]
-      @user = User.find(current_user.id)
+      if params[:id] == "me"
+        @user = User.find(current_user.id)
+      else 
+        @user = User.find(params[:id])
+      end  
       render "show.json.jbuilder"
     else
       render json: ["fail"]
@@ -42,10 +45,12 @@ class Api::UsersController < ApplicationController
   end
 
   def update
-    if current_user
-      @user = User.find(current_user.id)
+    if current_user.id = params[:id]
+      @user = User.find(current_user.id) 
       @user.full_name = params[:full_name] || @user.name
       @user.user_name = params[:user_name] || @user.user_name
+      @user.password = params[:password] || @user.password
+      @user.password_confirmation = params[:password_confirmation] || @user.password_confirmation
       @user.address = params[:address] || @user.address
       @user.email = params[:email] || @user.email
       @user.phone = params[:phone] || @user.phone
@@ -55,7 +60,7 @@ class Api::UsersController < ApplicationController
     else
       render json: ["Fail"]
     end
-    
+
     if @user.save
       render "show.json.jbuilder"
     else
