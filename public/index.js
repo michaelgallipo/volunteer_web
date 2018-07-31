@@ -33,7 +33,11 @@ var OrganizationIndexPage = {
         console.log(this.categories);
       }.bind(this));
   },
-  methods: {},
+  methods: {
+    getActiveUser: function() {
+      return localStorage.getItem("active_user");
+    },
+  },
   computed: {}
 };
 
@@ -163,7 +167,7 @@ var OrganizationNewPage = {
       axios
         .post("/api/organizations", params)
         .then(function(response) {
-          router.push("/");
+          router.push("/organizations");
       })
       .catch(
         function(error) {
@@ -327,7 +331,7 @@ var UserEditPage = {
       full_name: "",
       user_name: "",
       password: "",
-      confirm_password: "",
+      password_confirmation: "",
       address: "",
       email: "",
       phone: "",
@@ -342,7 +346,7 @@ var UserEditPage = {
         this.full_name = response.data.full_name;
         this.user_name = response.data.user_name;
         // password: this.password,
-        // confirm_password: this.confirm_password,
+        // password_confirmation: this.password_confirmation,
         this.address = response.data.address;
         this.email = response.data.email;
         this.phone = response.data.phone;
@@ -381,8 +385,31 @@ var UserEditPage = {
   computed: {}
 };
 
+var UserSearchPage = {
+  template: "#user-search-page",
+  data: function() {
+    return {
+      message: "Volunteer Web",
+      skills_search: "",
+      skills_search_results: []
+    };
+  },
+  methods: {
+    submit: function() {
+      var params = {
+        search: this.skills_search
+      };
+      axios.get("/api/users", params).then(
+      function(response) {
+        this.skills_search_results = response.data;
+        console.log(this.skills_search_results);
+      }.bind(this));
+      localStorage.setItem("skills_search_results", this.skills_search_results);
 
-
+    }
+  },
+  computed: {}
+};
 
 
 var LoginPage = {
@@ -425,6 +452,7 @@ var LogoutPage = {
   created: function() {
     axios.defaults.headers.common["Authorization"] = undefined;
     localStorage.removeItem("jwt");
+    localStorage.removeItem("active_user");
     router.push("/");
   }
 };
@@ -437,6 +465,7 @@ var router = new VueRouter({
   { path: "/organizations/new", component: OrganizationNewPage},
   { path: "/organizations/:id", component: OrganizationShowPage},
   { path: "/organizations/:id/edit", component: OrganizationEditPage},
+  { path: "/users", component: UserSearchPage},  
   { path: "/users/new", component: UserNewPage},
   { path: "/users/:id", component: UserShowPage},
   { path: "/users/:id/edit", component: UserEditPage},

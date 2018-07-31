@@ -150,8 +150,8 @@
 
                 <ul class="mb0 list-inline">
                 <li class="list-inline-item nav-item "><a data-scroll="" href="/#/organizations" class="nav-link">Return to Index</a></li>
-                <li class="list-inline-item nav-item "><a data-scroll="" v-bind:href=" '/#/organizations/' +organization.id + '/edit' " class="nav-link">Edit Organization Information</a></li>
-                <li class="list-inline-item nav-item "><a data-scroll="" v-on:click="deleteOrganization(organization)" class="nav-link">Delete Organization</a></li>
+                <li class="list-inline-item nav-item "><a data-scroll="" v-if="isMemberOf()" v-bind:href=" '/#/organizations/' +organization.id + '/edit' " class="nav-link">Edit Organization Information</a></li>
+                <li class="list-inline-item nav-item"><a data-scroll="" v-if="isMemberOf()" v-on:click="deleteOrganization(organization)" class="nav-link">Delete Organization</a></li>
             </ul>
         </div>
 
@@ -270,13 +270,12 @@
           <a v-if="member.visibility" v-bind:href=" '/#/users/' + member.id ">{{member.full_name}}</a>
         </div><br><br> -->
 
-      <router-link to="/organizations" tag="button">Return to Index</router-link> &emsp;
+<!--       <router-link to="/organizations" tag="button">Return to Index</router-link> &emsp;
       <router-link v-bind:to=" '/organizations/' +organization.id + '/edit' " tag="button">Edit Organization Information</router-link> &emsp;
       <button v-on:click="deleteOrganization(organization)">Delete Organization</button>  &emsp;
       <button v-if="!isMemberOf()" v-on:click="joinOrganization(organization)">Become Member</button>
-      <button v-if="isMemberOf()" v-on:click="leaveOrganization(organization)">Delete Membership</button>
+      <button v-if="isMemberOf()" v-on:click="leaveOrganization(organization)">Delete Membership</button> -->
 
-    </p>
     </div>
 
 
@@ -285,31 +284,92 @@
 <template id="organization-new-page">
   <div class="vue-component">
 
-    <h1>New Organization</h1>
+    <div class="container mb40">
 
       <ul>
         <li class="text-danger" v-for="error in errors">{{ error }}</li>
       </ul>
-      <div>
-        Name: <input v-model="name"><br>
-        Address: <input v-model="address"><br>
-        Webiste URL: <input v-model="website"><br>
-        Logo URL: <input v-model="logo"><br>
-        Contact Name: <input v-model="contact_name"><br>
-        Contact_email: <input v-model="contact_email"><br>
-        Contact Phone: <input v-model="contact_phone"><br>
-        Mission:<br> <textarea v-model="mission" cols="50" rows="6"></textarea><br>
-        Description: <br><textarea v-model="description" cols="50" rows="10"></textarea><br>
-        Category ID: 
-        <select v-model="category_id">
-        <option disabled value="">Please select one</option>
-        <option v-for="category in categories" v-bind:value="category.id">{{category.name}}</option>
-        </select><<br>
-        Needs: <input v-model="needs"><br>
-        <br><br>
-        <button v-on:click="submit()">Submit</button> 
-        <router-link to="/organizations" tag="button">Cancel</router-link>
+
+      <div class="row">
+        <div class="col-md-12 mb40">
+            <div class="fancy-title mb30">
+                <h4>New Organization</h4>
+                <div class="fancy-title-sep gray-sep"></div>
+            </div><!--title-->
+            <div class="form-group row">
+                <label for="example-name-input" class="col-2 col-form-label">Name</label>
+                <div class="col-10">
+                    <input class="form-control" v-model="name">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="example-Address-input" class="col-2 col-form-label">Address</label>
+                <div class="col-10">
+                    <input class="form-control" v-model="address">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="example-website-input" class="col-2 col-form-label">Website URL</label>
+                <div class="col-10">
+                    <input class="form-control" v-model="website">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="example-logo-input" class="col-2 col-form-label">Logo URL</label>
+                <div class="col-10">
+                    <input class="form-control" v-model="logo">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="example-contact-name-input" class="col-2 col-form-label">Contact Name</label>
+                <div class="col-10">
+                    <input class="form-control" v-model="contact_name">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="example-contact-email-input" class="col-2 col-form-label">Contact Email</label>
+                <div class="col-10">
+                    <input class="form-control" v-model="contact_email">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="example-contact-phone-input" class="col-2 col-form-label">Contact Phone</label>
+                <div class="col-10">
+                    <input class="form-control" v-model="contact_phone">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="example-mission-input" class="col-2 col-form-label">Mission</label>
+                <div class="col-10">
+                    <textarea class="form-control" v-model="mission" rows="6"></textarea> 
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="example-description-input" class="col-2 col-form-label">Description</label>
+                <div class="col-10">
+                    <textarea class="form-control" v-model="description" rows="8"></textarea> 
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="example-category-input" class="col-2 col-form-label">Category</label>
+                <div class="col-10">
+                  <select class="custom-select" v-model="category_id">
+                    <option disabled value="">Please select one</option>
+                    <option v-for="category in categories" v-bind:value="category.id">{{category.name}}</option>
+                  </select>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="example-needs-input" class="col-2 col-form-label">Needs</label>
+                <div class="col-10">
+                    <input class="form-control" v-model="needs">
+                </div>
+            </div>
+          </div>
+        <button class="btn btn-outline-primary btn-rounded" v-on:click="submit()">Submit</button>
+        <router-link to="/organizations" class="btn btn-outline-warning btn-rounded">Cancel</router-link>
       </div>
+    </div>
 
   </div>
 </template>
@@ -317,7 +377,105 @@
 <template id="organization-edit-page">
   <div class="vue-component">
 
-    <h1>Edit Organization</h1>
+    <div class="page-titles-img title-space-md bg-primary parallax-overlay" data-jarallax='{"speed": 0.2}' style='background-image: url("images/bg4.jpg");background-position:top center;'>
+        <div class="container">
+            <div class="row">
+                <div class=" col-md-12">
+                    <h1 class="text-uppercase">Volunteer Web</h1>
+                </div>
+            </div>
+        </div>
+    </div><!--page title end-->
+
+    <div class="container mb40">
+
+      <ul>
+        <li class="text-danger" v-for="error in errors">{{ error }}</li>
+      </ul>
+
+      <div class="row">
+        <div class="col-md-12 mb40">
+            <div class="fancy-title mb30">
+                <h4>Edit Organization</h4>
+                <div class="fancy-title-sep gray-sep"></div>
+            </div><!--title-->
+            <div class="form-group row">
+                <label for="example-name-input" class="col-2 col-form-label">Name</label>
+                <div class="col-10">
+                    <input class="form-control" v-model="name">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="example-Address-input" class="col-2 col-form-label">Address</label>
+                <div class="col-10">
+                    <input class="form-control" v-model="address">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="example-website-input" class="col-2 col-form-label">Website URL</label>
+                <div class="col-10">
+                    <input class="form-control" v-model="website">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="example-logo-input" class="col-2 col-form-label">Logo URL</label>
+                <div class="col-10">
+                    <input class="form-control" v-model="logo">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="example-contact-name-input" class="col-2 col-form-label">Contact Name</label>
+                <div class="col-10">
+                    <input class="form-control" v-model="contact_name">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="example-contact-email-input" class="col-2 col-form-label">Contact Email</label>
+                <div class="col-10">
+                    <input class="form-control" v-model="contact_email">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="example-contact-phone-input" class="col-2 col-form-label">Contact Phone</label>
+                <div class="col-10">
+                    <input class="form-control" v-model="contact_phone">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="example-mission-input" class="col-2 col-form-label">Mission</label>
+                <div class="col-10">
+                    <textarea class="form-control" v-model="mission" rows="6"></textarea> 
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="example-description-input" class="col-2 col-form-label">Description</label>
+                <div class="col-10">
+                    <textarea class="form-control" v-model="description" rows="8"></textarea> 
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="example-category-input" class="col-2 col-form-label">Category</label>
+                <div class="col-10">
+                  <select class="custom-select" v-model="category_id">
+                    <option disabled value="">Please select one</option>
+                    <option v-for="category in categories" v-bind:value="category.id">{{category.name}}</option>
+                  </select>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="example-needs-input" class="col-2 col-form-label">Needs</label>
+                <div class="col-10">
+                    <input class="form-control" v-model="needs">
+                </div>
+            </div>
+          </div>
+        <button class="btn btn-outline-primary btn-rounded" v-on:click="submit()">Submit</button>
+        <router-link to="/organizations" class="btn btn-outline-warning btn-rounded">Cancel</router-link>
+      </div>
+    </div>
+
+
+<!--     <h1>Edit Organization</h1>
 
       <ul>
         <li class="text-danger" v-for="error in errors">{{ error }}</li>
@@ -341,7 +499,7 @@
         <br><br>
         <button v-on:click="submit()">Submit</button>
         <router-link to="/organizations" tag="button">Cancel</router-link>
-      </div>
+      </div> -->
 
   </div>
 </template>
@@ -349,7 +507,17 @@
 <template id="user-show-page">
   <div class="vue-component">
 
-    <h1>{{ message }}</h1>
+    <div class="page-titles-img title-space-md bg-primary parallax-overlay" data-jarallax='{"speed": 0.2}' style='background-image: url("images/bg4.jpg");background-position:top center;'>
+      <div class="container">
+        <div class="row">
+          <div class=" col-md-12">
+            <h1 class="text-uppercase">{{message}}</h1>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container mb40">
 
       <h2>{{ user.full_name }}</h2>
       <p>User Name: {{user.user_name}}<br>
@@ -364,14 +532,16 @@
       <p>Skills: {{ user.skills }}
       <br><br>
             Affiliated Organizations:
-      <div  v-for="organization in user.member_of">
+        <div  v-for="organization in user.member_of">
            {{organization.name}}
         </div><br><br>
-      <a href="/#/organizations">Return to Organization Index</a> &emsp;
-      <a v-if="getActiveUser() == user.id" v-bind:href=" '/#/users/' +user.id + '/edit' ">Edit User Information</a> &emsp;
-      <button v-if="getActiveUser() == user.id" v-on:click="deleteUser(user)">Delete User</button> 
-    </p>
+      <router-link to="/organizations" class="btn btn-outline-primary mb5 btn-rounded">Return to Organization Index</router-link> &emsp;
+      <router-link v-if="getActiveUser() == user.id" v-bind:to=" '/users/' +user.id + '/edit' " class="btn btn-secondary mb5 btn-rounded">Edit User Information</router-link> &emsp;
+      <button v-if="getActiveUser() == user.id" v-on:click="deleteUser(user)" class="btn btn-danger mb5 btn-rounded">
+        <i class="fa fa-trash"></i>Delete User</button> 
+      </p>
     </div>
+  </div>
 
 </template>
 
@@ -407,12 +577,92 @@
 <template id="user-edit-page">
   <div class="vue-component">
 
-    <h1>Edit User Information</h1>
+    <div class="page-titles-img title-space-md bg-primary parallax-overlay" data-jarallax='{"speed": 0.2}' style='background-image: url("images/bg4.jpg");background-position:top center;'>
+      <div class="container">
+        <div class="row">
+          <div class=" col-md-12">
+            <h1 class="text-uppercase">Volunteer Web</h1>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container mb40">
+
+    <h2>Edit User Information</h2>
 
       <ul>
         <li class="text-danger" v-for="error in errors">{{ error }}</li>
       </ul>
-      <div>
+
+      <div class="row">
+        <div class="col-md-10 mb40">
+          <div class="form-group row">
+            <label for="example-full-name-input" class="col-2 col-form-label">Full Name</label>
+            <div class="col-8">
+                <input class="form-control" v-model="full_name">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="example-user-name-input" class="col-2 col-form-label">User Name</label>
+            <div class="col-8">
+                <input class="form-control" v-model="user_name">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="example-password-input" class="col-2 col-form-label">Password</label>
+            <div class="col-8">
+                <input class="form-control" v-model="password">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="example-password-confirmation-input" class="col-2 col-form-label">Confirm Password</label>
+            <div class="col-8">
+                <input class="form-control" v-model="password_confirmation">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="example-address-input" class="col-2 col-form-label">Address</label>
+            <div class="col-8">
+                <input class="form-control" v-model="address">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="example-email-input" class="col-2 col-form-label">Email</label>
+            <div class="col-8">
+                <input class="form-control" v-model="email">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="example-phone-input" class="col-2 col-form-label">Phone</label>
+            <div class="col-8">
+                <input class="form-control" v-model="phone">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="example-visibility-input" class="col-2 col-form-label">Be Visible?</label>
+            <div class="col-8">
+                <input type="radio" id="true" value="true" v-model="visibility">Yes &ensp;
+                <input type="radio" id="false" value="false" v-model="visibility">No
+            </div>
+          </div>
+          <div class="form-group row">
+          <label for="example-bio-input" class="col-2 col-form-label">Bio</label>
+            <div class="col-8">
+                <textarea class="form-control" v-model="bio" rows="6"></textarea>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="example-skills-input" class="col-2 col-form-label">Skills</label>
+            <div class="col-8">
+                <input class="form-control" v-model="skills">
+            </div>
+          </div>            
+            <button class="btn btn-outline-success mb5 btn-rounded" v-on:click="submit()">Submit</button> 
+            <router-link to="/users/me" class="btn btn-outline-warning mb5 btn-rounded">Cancel</router-link>
+          </div>
+        </div>
+<!--       <div>
         Full Name: <input v-model="full_name"><br>
         User Name: <input v-model="user_name"><br>
         Password: <input v-model="password"><br>
@@ -428,12 +678,25 @@
         <br><br>
         <button v-on:click="submit()">Submit</button> 
         <router-link to="users/me" tag="button">Cancel</router-link>
-      </div>
+      </div> -->
+    </div>
 
   </div>
 </template>
 
+<template id="user-search-page">
+  <div class="vue-component">
 
+    <h1>Search Users</h1>
+
+      <div>
+        Skills: <input v-model="skills_search">
+        <button v-on:click="submit()">Search</button> 
+        <router-link to="/" tag="button">Cancel</router-link>
+      </div>
+
+  </div>
+</template>
 
 
 <template id="login-page">

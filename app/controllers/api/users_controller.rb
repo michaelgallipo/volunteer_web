@@ -2,6 +2,11 @@ class Api::UsersController < ApplicationController
 
   def index
     @users = User.all
+
+    if params[:search]
+      @users = User.where("skills LIKE ?", "%#{params[:search]}%")
+    end
+
     render "index.json.jbuilder"
 
   end
@@ -9,6 +14,7 @@ class Api::UsersController < ApplicationController
   def show
 
     if current_user
+
       if params[:id] == "me"
         @user = User.find(current_user.id)
       else 
