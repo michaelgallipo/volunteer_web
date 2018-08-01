@@ -4,7 +4,7 @@ class Api::UsersController < ApplicationController
     @users = User.all
 
     if params[:search]
-      @users = User.where("skills LIKE ?", "%#{params[:search]}%")
+      @users = User.where("lower(skills) LIKE ? AND visibility = ?", "%#{params[:search].downcase}%", true)
     end
 
     render "index.json.jbuilder"

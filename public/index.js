@@ -247,6 +247,36 @@ var OrganizationEditPage = {
   }, 
 };
 
+var UserIndexPage = {
+  template: "#user-index-page",
+  data: function() {
+    return {
+      message: "Volunteer Web",
+      users: [],
+      search: ""
+    };
+  },
+  created: function() {
+    var skills_search = localStorage.getItem("skills_search");
+    var params = {
+      search: skills_search
+    };
+    console.log(params);
+    axios.get("/api/users", {params}).then(
+      function(response) {
+        this.users = response.data;
+        console.log(this.users);
+      }.bind(this));
+  },
+  methods: {
+    getActiveUser: function() {
+      return localStorage.getItem("active_user");
+    },
+  },
+  computed: {}
+};
+
+
 var UserShowPage = {
   template: "#user-show-page",
   data: function() {
@@ -390,22 +420,13 @@ var UserSearchPage = {
   data: function() {
     return {
       message: "Volunteer Web",
-      skills_search: "",
-      skills_search_results: []
+      skills_search: ""
     };
   },
   methods: {
     submit: function() {
-      var params = {
-        search: this.skills_search
-      };
-      axios.get("/api/users", params).then(
-      function(response) {
-        this.skills_search_results = response.data;
-        console.log(this.skills_search_results);
-      }.bind(this));
-      localStorage.setItem("skills_search_results", this.skills_search_results);
-
+      localStorage.setItem("skills_search", this.skills_search);
+      router.push("/users");
     }
   },
   computed: {}
@@ -457,20 +478,21 @@ var LogoutPage = {
   }
 };
 
-
 var router = new VueRouter({
   routes: [
   { path: "/", component: HomePage },
   { path: "/organizations", component:OrganizationIndexPage},
   { path: "/organizations/new", component: OrganizationNewPage},
   { path: "/organizations/:id", component: OrganizationShowPage},
-  { path: "/organizations/:id/edit", component: OrganizationEditPage},
-  { path: "/users", component: UserSearchPage},  
+  { path: "/organizations/:id/edit", component: OrganizationEditPage}, 
+  { path: "/users", component: UserIndexPage},   
   { path: "/users/new", component: UserNewPage},
   { path: "/users/:id", component: UserShowPage},
   { path: "/users/:id/edit", component: UserEditPage},
+  { path: "/users/:id/search", component: UserSearchPage},
   { path: "/login", component: LoginPage },
   { path: "/logout", component: LogoutPage }
+
   ],
   scrollBehavior: function(to, from, savedPosition) {
     return { x: 0, y: 0 };

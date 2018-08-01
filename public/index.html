@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <title>Volunteer Web</title>
 
   <link href="css/plugins/plugins.css" rel="stylesheet">
@@ -48,6 +49,9 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" v-if="isLoggedIn()" href="/#/users/me">User Profile Page</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" v-if="isLoggedIn()" href="/#/users/me/search">Search Users</a>
                         </li>
                     </ul>        
                 </div>
@@ -103,30 +107,19 @@
     <div class="row">
       <div v-for="organization in organizations" class="col-lg-6">
 
-            <div class='mb30 image-text-card1' v-if="organization.category_id === search_id || search_id == '' ">  
-              <img :src="organization.logo" alt='' style="width:350px;height:200px;" >
-                <h3><a v-bind:href=" '/#/organizations/' + organization.id">{{organization.name}}</a></h3>
-                <p>{{organization.address}}<br>
-                {{organization.website}}</p>
+        <div class='mb30 image-text-card1' v-if="organization.category_id === search_id || search_id == '' ">  
+          <img :src="organization.logo" alt='' style="width:350px;height:200px;" >
+            <h3><a v-bind:href=" '/#/organizations/' + organization.id">{{organization.name}}</a></h3>
+            <p>{{organization.address}}<br>
+            {{organization.website}}</p>
 
-                <p>Category: {{ organization.category.name}}<br></p>
-                <p>Mission: <br>
-                <textarea :value="organization.mission" cols="75" rows="6"></textarea><br>
-                </p>
-                <p>Needs: {{ organization.needs }}</p>
-              </div>
+            <p>Category: {{ organization.category.name}}<br></p>
+            <p>Mission: <br>
+            <textarea :value="organization.mission" cols="75" rows="6"></textarea><br>
+            </p>
+            <p>Needs: {{ organization.needs }}</p>
+          </div>
 
-  <!--     <div v-for="organization in organizations">
-        <div v-if="organization.category_id === search_id || search_id == '' ">
-        <h3><a v-bind:href=" '/#/organizations/' + organization.id">{{organization.name}}</a></h3>
-        <p>{{organization.address}}<br>
-        {{organization.website}}</p>
-        <img :src="organization.logo" style="width:200px;height:200px;"><br>
-        <p>Category: {{ organization.category.name}}<br></p>
-        <p>Mission: <br>
-          <textarea :value="organization.mission" cols="50" rows="6"></textarea><br>
-        </p>
-        <p>Needs: {{ organization.needs }}</p> -->
       </div>
     </div>
 
@@ -504,6 +497,95 @@
   </div>
 </template>
 
+<template id="user-index-page">
+  <div class="vue-component">
+
+    <div class="page-titles page-title-center bg-primary pt30 pb20">
+      <div class="container">
+        <div class="row">
+            <div class=" col-md-12 text-center">
+                <h3 class="text-uppercase">{{message}}</h3>
+            </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="navbar-seconday bg-faded nav-sticky text-center mb10" id="navsecondary">
+
+        <ul class="mb0 list-inline">
+            <li class="list-inline-item nav-item "><a data-scroll="" href="/#/organizations" class="nav-link">Return to Index</a></li>
+            <li class="list-inline-item nav-item "><a data-scroll="" href="/#/users/me/search" class="nav-link">Return to Search</a></li>
+        </ul>
+    </div>
+
+    <div class="row">
+      <div v-for="user in users" class="col-md-12">
+
+        <div class='mb30 image-text-card1'>  
+            <h3><a v-bind:href=" '/#/users/' + user.id">{{user.full_name}}</a></h3>
+        </div>
+
+      <div class="container">
+        <div class="row pb10">
+
+          <div class="col-md-3 mb30">
+            <h4 class="text-uppercase mb30">
+                Contact Info
+            </h4>
+            <div class="media mb20">
+                <i class="d-flex mt5 fa fa-home icon-sm-rounded mr-3"></i>
+                <div class="media-body">
+                    <h5 class="mt-0 mb0 text-uppercase">Address</h5>
+                    {{user.address}}
+                </div>
+            </div>
+            <div class="media mb20">
+                <i class="d-flex mt5 fa fa-phone icon-sm-rounded mr-3"></i>
+                <div class="media-body">
+                    <h5 class="mt-0 mb0 text-uppercase">Phone</h5>
+                    {{user.phone}}
+                </div>
+            </div>           
+            <div class="media mb20">
+                <i class="d-flex mt5 fa fa-envelope icon-sm-rounded mr-3"></i>
+                <div class="media-body">
+                    <h5 class="mt-0 mb0 text-uppercase">Email</h5>
+                    {{user.email}}
+                </div>
+            </div>   
+          </div>  
+          <div class="col-md-4 mb30">
+            <h4 class="text-uppercase">
+                Biography
+            </h4>
+            <p>
+               {{user.bio}}
+            </p><br><br>
+            <h4 class="text-uppercase">
+                Skills
+            </h4>
+            <p>
+               {{user.skills}}
+            </p><br><br>
+          </div>
+          <div class="col-md-3 mb30">
+            <h4 class="text-uppercase">
+                Affiliated Organizations
+            </h4>
+            <div  v-for="organization in user.member_of">
+              {{organization.name}}
+            </div>
+
+          </div>
+        </div>            
+      </div>
+    </div>
+  </div>
+
+  </div>
+</template>
+
+
 <template id="user-show-page">
   <div class="vue-component">
 
@@ -547,13 +629,92 @@
 
 <template id="user-new-page">
   <div class="vue-component">
+    
+    <div class="page-titles-img title-space-md bg-primary parallax-overlay" data-jarallax='{"speed": 0.2}' style='background-image: url("images/bg4.jpg");background-position:top center;'>
+        <div class="container">
+            <div class="row">
+                <div class=" col-md-12">
+                    <h1 class="text-uppercase">Volunteer Web</h1>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    <h1>New User</h1>
+    <div class="container mb40">
+
+
 
       <ul>
         <li class="text-danger" v-for="error in errors">{{ error }}</li>
       </ul>
-      <div>
+
+      <div class="row">
+        <div class="col-md-12 mb40">
+            <h3>New User Account</h3><br>
+
+            <div class="form-group row">
+              <label for="example-name-input" class="col-2 col-form-label">Full Name</label>
+                <div class="col-8">
+                  <input class="form-control" v-model="full_name">
+                </div>
+            </div>  
+            <div class="form-group row">
+                <label for="example-name-input" class="col-2 col-form-label">User Name</label>
+                <div class="col-8">
+                    <input class="form-control" v-model="user_name">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="example-name-input" class="col-2 col-form-label">Password</label>
+                <div class="col-8">
+                    <input class="form-control" v-model="password">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="example-name-input" class="col-2 col-form-label">Confirm Password</label>
+                <div class="col-8">
+                    <input class="form-control" v-model="confirm_password">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="example-name-input" class="col-2 col-form-label">Address</label>
+                <div class="col-8">
+                    <input class="form-control" v-model="address">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="example-name-input" class="col-2 col-form-label">Email</label>
+                <div class="col-8">
+                    <input class="form-control" v-model="email">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="example-name-input" class="col-2 col-form-label">Phone</label>
+                <div class="col-8">
+                    <input class="form-control" v-model="phone">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="example-name-input" class="col-2 col-form-label">Be Visible?</label>
+                <div class="col-8">
+                    <input type="radio" id="true" value="true" v-model="visibility">Yes &ensp;
+                    <input type="radio" id="false" value="false" v-model="visibility">No
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="example-name-input" class="col-2 col-form-label">Biography</label>
+                <div class="col-8">
+                    <textarea class="form-control" v-model="bio" rows="6"></textarea>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="example-name-input" class="col-2 col-form-label">Skills</label>
+                <div class="col-8">
+                    <input class="form-control" v-model="skills">
+                </div>
+            </div>
+
+<!--       <div>
         Full Name: <input v-model="full_name"><br>
         User Name: <input v-model="user_name"><br>
         Password: <input v-model="password"><br>
@@ -566,11 +727,12 @@
         <br>
         Bio:<br> <textarea v-model="bio" cols="50" rows="8"></textarea><br>
         Skills: <input v-model="skills"><br>
-        <br><br>
-        <button v-on:click="submit()">Submit</button> 
-        <router-link to="/" tag="button">Cancel</router-link>
+        <br><br> -->
+        <button v-on:click="submit()" class="btn btn-outline-success mb5 btn-rounded">Submit</button> 
+        <router-link to="/" tag="button" class="btn btn-outline-warning mb5 btn-rounded">Cancel</router-link>
+        </div>
       </div>
-
+    </div>
   </div>
 </template>
 
@@ -691,10 +853,10 @@
 
       <div>
         Skills: <input v-model="skills_search">
-        <button v-on:click="submit()">Search</button> 
+        <button v-on:click="submit()" class="input-group-addon" id="basic-addon2">
+          <i class="ti-search"></i></button> 
         <router-link to="/" tag="button">Cancel</router-link>
       </div>
-
   </div>
 </template>
 
@@ -716,6 +878,9 @@
         <input type="password" class="form-control" v-model="password">
       </div>
       <button class="btn btn-primary" v-on:click="submit()">Submit</button>
+        <div class="pull-right">
+          <p><a href="/#/password-reset">Forget password?</a></p>
+        </div>
     </div>
 
   </div>
