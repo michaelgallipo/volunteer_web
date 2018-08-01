@@ -232,45 +232,13 @@
                     <h5 class="mt-0 mb0 text-uppercase">website</h5>
                     {{organization.website}}
                 </div>
+              </div>
             </div>
         </div>
-    </div>
 
-
-    </div>
-
-<!--     <h1>{{ message }}</h1> -->
-
-<!--       <h2>{{ organization.name }}</h2>
-      <p>{{organization.address}}<br>
-      {{organization.website}}</p>
-      <img :src="organization.logo" style="width:200px;height:200px;"><br>
-      <h4>Contact Info</h4>
-      <p>{{ organization.contact_name }}<br>
-        {{ organization.contact_email }}<br>
-        {{ organization.contact_phone }}<br></p>
-      <p>Category: {{ organization.category.name}} <br></p>
-      <p>Mission: <br>
-        <textarea :value="organization.mission" cols="50" rows="6"></textarea><br>
-      </p>
-      <p>Description: <br>
-        <textarea :value="organization.description" cols="50" rows="10"></textarea><br>
-      </p>
-      <p>Needs: {{ organization.needs }}
-      <br><br>
-      Members:
-      <div  v-for="member in organization.members">
-          <a v-if="member.visibility" v-bind:href=" '/#/users/' + member.id ">{{member.full_name}}</a>
-        </div><br><br> -->
-
-<!--       <router-link to="/organizations" tag="button">Return to Index</router-link> &emsp;
-      <router-link v-bind:to=" '/organizations/' +organization.id + '/edit' " tag="button">Edit Organization Information</router-link> &emsp;
-      <button v-on:click="deleteOrganization(organization)">Delete Organization</button>  &emsp;
-      <button v-if="!isMemberOf()" v-on:click="joinOrganization(organization)">Become Member</button>
-      <button v-if="isMemberOf()" v-on:click="leaveOrganization(organization)">Delete Membership</button> -->
+      </div>
 
     </div>
-
 
 </template>
 
@@ -467,33 +435,6 @@
       </div>
     </div>
 
-
-<!--     <h1>Edit Organization</h1>
-
-      <ul>
-        <li class="text-danger" v-for="error in errors">{{ error }}</li>
-      </ul>
-      <div>
-        Name: <input v-model="name"><br>
-        Address: <input v-model="address"><br>
-        Webiste URL: <input v-model="website"><br>
-        Logo URL: <input v-model="logo"><br>
-        Contact Name: <input v-model="contact_name"><br>
-        Contact_email: <input v-model="contact_email"><br>
-        Contact Phone: <input v-model="contact_phone"><br>
-        Mission:<br> <textarea v-model="mission" cols="50" rows="6"></textarea><br>
-        Description: <br><textarea v-model="description" cols="50" rows="10"></textarea><br>
-
-        Category ID: 
-        <select v-model="category_id">
-        <option v-for="category in categories" v-bind:value="category.id">{{category.name}}</option>
-        </select><<br>
-        Needs: <input v-model="needs"><br>
-        <br><br>
-        <button v-on:click="submit()">Submit</button>
-        <router-link to="/organizations" tag="button">Cancel</router-link>
-      </div> -->
-
   </div>
 </template>
 
@@ -643,7 +584,6 @@
     <div class="container mb40">
 
 
-
       <ul>
         <li class="text-danger" v-for="error in errors">{{ error }}</li>
       </ul>
@@ -714,20 +654,6 @@
                 </div>
             </div>
 
-<!--       <div>
-        Full Name: <input v-model="full_name"><br>
-        User Name: <input v-model="user_name"><br>
-        Password: <input v-model="password"><br>
-        Confirm Password: <input v-model="confirm_password"><br>
-        Address: <input v-model="address"><br>
-        Email: <input v-model="email"><br>
-        Phone: <input v-model="phone"><br>
-        Be Visible: <input type="radio" id="true" value="true" v-model="visibility">Yes &ensp;
-        <input type="radio" id="false" value="false" v-model="visibility">No
-        <br>
-        Bio:<br> <textarea v-model="bio" cols="50" rows="8"></textarea><br>
-        Skills: <input v-model="skills"><br>
-        <br><br> -->
         <button v-on:click="submit()" class="btn btn-outline-success mb5 btn-rounded">Submit</button> 
         <router-link to="/" tag="button" class="btn btn-outline-warning mb5 btn-rounded">Cancel</router-link>
         </div>
@@ -824,23 +750,7 @@
             <router-link to="/users/me" class="btn btn-outline-warning mb5 btn-rounded">Cancel</router-link>
           </div>
         </div>
-<!--       <div>
-        Full Name: <input v-model="full_name"><br>
-        User Name: <input v-model="user_name"><br>
-        Password: <input v-model="password"><br>
-        Confirm Password: <input v-model="password_confirmation"><br>
-        Address: <input v-model="address"><br>
-        Email: <input v-model="email"><br>
-        Phone: <input v-model="phone"><br>
-        Be Visible: <input type="radio" id="true" value="true" v-model="visibility">Yes &ensp;
-        <input type="radio" id="false" value="false" v-model="visibility">No
-        <br>
-        Bio:<br> <textarea v-model="bio" cols="50" rows="8"></textarea><br>
-        Skills: <input v-model="skills"><br>
-        <br><br>
-        <button v-on:click="submit()">Submit</button> 
-        <router-link to="users/me" tag="button">Cancel</router-link>
-      </div> -->
+
     </div>
 
   </div>

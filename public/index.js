@@ -48,6 +48,7 @@ var OrganizationShowPage = {
       message: "Volunteer Web",
       organization: {},
       members: [],
+      member: false,
       user_id: ""
     };
   },
@@ -76,10 +77,11 @@ var OrganizationShowPage = {
       var params = {
         organization_id: this.organization.id
       };
+      var member = true;
       axios
         .post("/api/members", params)
         .then(function(response) {
-          router.push("/organizations/" +this.$route.params.id);
+          router.push("/organizations/");
         }.bind(this)
       );
     },
@@ -100,12 +102,6 @@ var OrganizationShowPage = {
             router.push("/organizations/");
           });
     },
-    // isLoggedIn: function() {
-    //   if (localStorage.getItem("jwt")) {
-    //     return true;
-    //   }
-    //     return false;
-    // },
     getActiveUser: function() {
       return localStorage.getItem("active_user");
     },
